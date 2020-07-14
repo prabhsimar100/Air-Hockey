@@ -12,15 +12,23 @@ def ball_animation():
 		
 	# Player Score
 	if ball.left <= 0: 
-		pygame.mixer.Sound.play(score_sound)
-		score_time = pygame.time.get_ticks()
-		player_score += 1
+		if ball.top <= goal_top or ball.bottom >= goal_bottom:
+			pygame.mixer.Sound.play(plob_sound)
+			ball_speed_x *= -1
+		else:	
+			pygame.mixer.Sound.play(score_sound)
+			score_time = pygame.time.get_ticks()
+			player_score += 1
 		
 	# Opponent Score
 	if ball.right >= screen_width:
-		pygame.mixer.Sound.play(score_sound)
-		score_time = pygame.time.get_ticks()
-		opponent_score += 1
+		if ball.top <= goal_top or ball.bottom >= goal_bottom:
+			pygame.mixer.Sound.play(plob_sound)
+			ball_speed_x *= -1
+		else:
+			pygame.mixer.Sound.play(score_sound)
+			score_time = pygame.time.get_ticks()
+			opponent_score += 1
 		
 	if ball.colliderect(player) and ball_speed_x > 0:
 		pygame.mixer.Sound.play(plob_sound)
@@ -44,10 +52,10 @@ def ball_animation():
 def player_animation():
 	player.y += player_speed
 
-	if player.top <= 0:
-		player.top = 0
-	if player.bottom >= screen_height:
-		player.bottom = screen_height
+	if player.top <= goal_top:
+		player.top = goal_top
+	if player.bottom >= goal_bottom:
+		player.bottom = goal_bottom
 
 def opponent_ai():
 	if opponent.top < ball.y:
@@ -55,10 +63,10 @@ def opponent_ai():
 	if opponent.bottom > ball.y:
 		opponent.y -= opponent_speed
 
-	if opponent.top <= 0:
-		opponent.top = 0
-	if opponent.bottom >= screen_height:
-		opponent.bottom = screen_height
+	if opponent.top <= goal_top:
+		opponent.top = goal_top
+	if opponent.bottom >= goal_bottom:
+		opponent.bottom = goal_bottom
 
 def ball_start():
 	global ball_speed_x, ball_speed_y, ball_moving, score_time
@@ -102,6 +110,8 @@ bg_color = pygame.Color('grey12')
 ball = pygame.Rect(screen_width / 2 - 10, screen_height / 2 - 10, 20, 20)
 player = pygame.Rect(screen_width - 20, screen_height / 2 - 40, 10,80)
 opponent = pygame.Rect(10, screen_height / 2 - 40, 10,80)
+goal1 = pygame.Rect(screen_height/2 - 120, 30, 10 , 240)
+goal2 = pygame.Rect(screen_height/2 - 120, screen_width - 350, 10 , 240)
 
 # Game Variables
 ball_speed_x = 7 * random.choice((1,-1))
@@ -110,6 +120,8 @@ player_speed = 0
 opponent_speed = 7
 ball_moving = False
 score_time = True
+goal_top = screen_height/2 - 120;
+goal_bottom = screen_height/2 + 120;
 
 # Score Text
 player_score = 0
@@ -147,6 +159,9 @@ while True:
 	pygame.draw.rect(screen, light_grey, opponent)
 	pygame.draw.ellipse(screen, light_grey, ball)
 	pygame.draw.aaline(screen, light_grey, (screen_width / 2, 0),(screen_width / 2, screen_height))
+	pygame.draw.rect(screen, light_grey, goal2)
+	pygame.draw.rect(screen, light_grey, goal1)
+
 
 	if score_time:
 		ball_start()
