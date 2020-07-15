@@ -119,10 +119,10 @@ bg_color = pygame.Color('grey12')
 
 # Game Rectangles
 ball = pygame.Rect(screen_width / 2 - 10, screen_height / 2 - 10, 20, 20)
-player = pygame.Rect(screen_width - 20, screen_height / 2 - 40, 10,80)
-opponent = pygame.Rect(10, screen_height / 2 - 40, 10,80)
-goal1 = pygame.Rect(screen_height/2 - 120, 30, 10 , 240)
-goal2 = pygame.Rect(screen_height/2 - 120, screen_width - 350, 10 , 240)
+player = pygame.Rect(screen_width - 50, screen_height / 2 - 40, 10,80)
+opponent = pygame.Rect(40, screen_height / 2 - 40, 10,80)
+goal1 = pygame.Rect(30, screen_height/2 - 120, 5 , 240)
+goal2 = pygame.Rect(screen_width - 30, screen_height/2 - 120, 5 , 240)
 obs = []
 
 # Game Variables
@@ -181,15 +181,15 @@ while True:
 	opponent_ai()
 
 	# Visuals 
-	screen.fill(bg_color)
+	screen.fill((37,156,135))
 	for ele in obs:
 		pygame.draw.rect(screen, light_grey, ele)
-	pygame.draw.rect(screen, light_grey, player)
-	pygame.draw.rect(screen, light_grey, opponent)
-	pygame.draw.ellipse(screen, light_grey, ball)
-	pygame.draw.aaline(screen, light_grey, (screen_width / 2, 0),(screen_width / 2, screen_height))
 	pygame.draw.rect(screen, light_grey, goal2)
 	pygame.draw.rect(screen, light_grey, goal1)
+	pygame.draw.rect(screen, (223,87,14), player)
+	pygame.draw.rect(screen, (236,230,97), opponent)
+	pygame.draw.ellipse(screen, light_grey, ball)
+	pygame.draw.aaline(screen, light_grey, (screen_width / 2, 0),(screen_width / 2, screen_height))
 
 
 	if score_time:
