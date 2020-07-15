@@ -1,4 +1,15 @@
-import pygame, sys, random
+import pygame, sys, random, time
+
+class obstlacles:
+	def __init__(self):
+		self.arr = []
+
+	def add(self,n):
+		self.arr.clear()
+		while n:
+			x = [random.choice(range(10, screen_width - 10)) , random.choice(range(screen_height))]
+			self.arr.append(x)
+			n -= 1;
 
 def ball_animation():
 	global ball_speed_x, ball_speed_y, player_score, opponent_score, score_time
@@ -87,8 +98,8 @@ def ball_start():
 	if current_time - score_time < 2100:
 		ball_speed_y, ball_speed_x = 0,0
 	else:
-		ball_speed_x = 7 * random.choice((1,-1))
-		ball_speed_y = 7 * random.choice((1,-1))
+		ball_speed_x = 5 * random.choice((1,-1))
+		ball_speed_y = 5 * random.choice((1,-1))
 		score_time = None
 
 # General setup
@@ -112,16 +123,19 @@ player = pygame.Rect(screen_width - 20, screen_height / 2 - 40, 10,80)
 opponent = pygame.Rect(10, screen_height / 2 - 40, 10,80)
 goal1 = pygame.Rect(screen_height/2 - 120, 30, 10 , 240)
 goal2 = pygame.Rect(screen_height/2 - 120, screen_width - 350, 10 , 240)
+obs = []
 
 # Game Variables
-ball_speed_x = 7 * random.choice((1,-1))
-ball_speed_y = 7 * random.choice((1,-1))
+ball_speed_x = 5 * random.choice((1,-1))
+ball_speed_y = 5 * random.choice((1,-1))
 player_speed = 0
 opponent_speed = 7
 ball_moving = False
 score_time = True
 goal_top = screen_height/2 - 120;
 goal_bottom = screen_height/2 + 120;
+obb = obstlacles()
+obb.add(10)
 
 # Score Text
 player_score = 0
@@ -131,6 +145,8 @@ basic_font = pygame.font.Font('freesansbold.ttf', 32)
 # sound 
 plob_sound = pygame.mixer.Sound("pong.ogg")
 score_sound = pygame.mixer.Sound("score.ogg")
+
+prev_time = time.perf_counter()
 
 while True:
 	for event in pygame.event.get():
@@ -148,6 +164,17 @@ while True:
 			if event.key == pygame.K_DOWN:
 				player_speed -= 6
 	
+	# tm = random.choice((2,3))
+	new_time = time.perf_counter()
+	if new_time - prev_time > 5.0:
+		prev_time = new_time
+		obb.arr.clear()
+		obb.add(5)
+		obs.clear()
+		for ele in obb.arr:
+			x = pygame.Rect(ele[0], ele[1], 10,10)
+			obs.append(x)
+
 	#Game Logic
 	ball_animation()
 	player_animation()
@@ -155,6 +182,8 @@ while True:
 
 	# Visuals 
 	screen.fill(bg_color)
+	for ele in obs:
+		pygame.draw.rect(screen, light_grey, ele)
 	pygame.draw.rect(screen, light_grey, player)
 	pygame.draw.rect(screen, light_grey, opponent)
 	pygame.draw.ellipse(screen, light_grey, ball)
@@ -173,5 +202,5 @@ while True:
 	screen.blit(opponent_text,(screen_width/2 - 30,0))
 
 	pygame.display.flip()
-	clock.tick(60)
+	clock.tick(120)
 
