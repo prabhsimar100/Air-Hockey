@@ -1,68 +1,15 @@
 import pygame, sys, random, time
 
 class obstlacles:
-	def __init__(self):
+	def _init_(self):
 		self.arr = []
 
 	def add(self,n):
-		self.arr.clear()
+		# self.arr.clear()
 		while n:
-			x = [random.choice(range(10, screen_width - 10)) , random.choice(range(screen_height)), random.choice((+1,-1))]
+			x = [random.choice(range(10, screen_width - 10)) , random.choice(range(screen_height))]
 			self.arr.append(x)
 			n -= 1;
-
-def obs_collide():
-	global ball_speed_x, ball_speed_y, player_score, opponent_score, score_time
-	sz = len(obs)
-	# mn = obs[0][0]*screen_width + obb.arr[0][1]
-	# mx = obb.arr[sz-1][0]*screen_width + obb.arr[sz-1][1]
-	l = 0;
-	e = sz-1;
-	print(obs)
-	while(l<=e):
-		mid = int((l+e)/2)
-
-		cur = ball.x*screen_width + ball.y
-		x = obs[mid].x*screen_width + obs[mid].y
-		if(x > cur):
-			if ball.colliderect(obs[mid]):
-				if(ball_speed_x > 0):
-					opponent_score += 1
-				else:
-					player_score += 1
-			break
-			l = mid+1
-		elif(x < cur):
-			if ball.colliderect(obs[mid]):
-				if(ball_speed_x > 0):
-					opponent_score += 1
-				else:
-					player_score += 1
-			break
-			e = mid-1
-		else:
-			if(ball_speed_x > 0):
-				opponent_score += 1
-			else:
-				player_score += 1
-			break
-
-def object_collide():
-	global ball_speed_x, player_score, opponent_score
-	for i in range(len(obs)-1):
-		if ball.colliderect(obs[i]):
-			if obb.arr[i][2]>=1:
-				if ball_speed_x < 0:
-					player_score += 1
-				else:
-					opponent_score +=1
-			else:
-				if ball_speed_x < 0:
-					player_score -= 1
-				else:
-					opponent_score -=1
-			obs.pop(i)
-			obb.arr.pop(i)
 
 def ball_animation():
 	global ball_speed_x, ball_speed_y, player_score, opponent_score, score_time
@@ -76,7 +23,7 @@ def ball_animation():
 		
 	# Player Score
 	if ball.left <= 0: 
-		if ball.bottom <= goal_top or ball.top >= goal_bottom:
+		if ball.top <= goal_top or ball.bottom >= goal_bottom:
 			pygame.mixer.Sound.play(plob_sound)
 			ball_speed_x *= -1
 		else:	
@@ -86,7 +33,7 @@ def ball_animation():
 		
 	# Opponent Score
 	if ball.right >= screen_width:
-		if ball.bottom <= goal_top or ball.top >= goal_bottom:
+		if ball.top <= goal_top or ball.bottom >= goal_bottom:
 			pygame.mixer.Sound.play(plob_sound)
 			ball_speed_x *= -1
 		else:
@@ -102,10 +49,10 @@ def ball_animation():
 			player_mid = (player.top+player.bottom)/2
 			gradient = 2*abs(player_mid-ball_mid)
 			gradient /= player_mid
-			ball_speed_y = gradient*10
-			ball_speed_y += 0.5
+			ball_speed_y *= gradient
 		elif abs(ball.bottom - player.top) < 10 and ball_speed_y > 0:
 			ball_speed_y *= -1
+			ball_speed_x 
 		elif abs(ball.top - player.bottom) < 10 and ball_speed_y < 0:
 			ball_speed_y *= -1
 		
@@ -118,8 +65,7 @@ def ball_animation():
 			opponent_mid = (opponent.top+opponent.bottom)/2
 			gradient = 2*abs(opponent_mid-ball_mid)
 			gradient /= opponent_mid
-			ball_speed_y = gradient*10
-			ball_speed_y += 0.5
+			ball_speed_y *= gradient
 		elif abs(ball.bottom - opponent.top) < 10 and ball_speed_y > 0:
 			ball_speed_y *= -1
 		elif abs(ball.top - opponent.bottom) < 10 and ball_speed_y < 0:
@@ -232,6 +178,7 @@ while True:
 			if event.key == pygame.K_DOWN:
 				player_speed -= 6
 	
+	# tm = random.choice((2,3))
 	new_time = time.perf_counter()
 	if new_time - prev_time > 5.0:
 		prev_time = new_time
@@ -239,23 +186,18 @@ while True:
 		obb.add(5)
 		obs.clear()
 		for ele in obb.arr:
-			x = pygame.Rect(ele[0], ele[1], 30,30)
+			x = pygame.Rect(ele[0], ele[1], 10,10)
 			obs.append(x)
 
 	#Game Logic
 	ball_animation()
 	player_animation()
 	opponent_ai()
-	object_collide()
 
 	# Visuals 
 	screen.fill((37,156,135))
-	for i in range(len(obs)-1):
-		if obb.arr[i][2] == 1:
-			pygame.draw.rect(screen, (228, 227, 227), obs[i])
-		else:
-			pygame.draw.rect(screen, (132, 169, 172), obs[i])
-
+	for ele in obs:
+		pygame.draw.rect(screen, light_grey, ele)
 	pygame.draw.rect(screen, light_grey, goal2)
 	pygame.draw.rect(screen, light_grey, goal1)
 	pygame.draw.rect(screen, (223,87,14), player)
